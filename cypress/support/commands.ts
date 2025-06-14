@@ -37,10 +37,16 @@
 // }
 
 Cypress.Commands.add('login', (email: string, password: string) => {
-    cy.visit('https://quizplus.com/');
-    cy.get('[data-cy="loginCTA-header"]',{timeout:5000}).click();
+    cy.get('[data-cy="loginCTA-header"]',{timeout:5000}).click({force: true});
+    cy.get('[data-cy="app-auth-modal"]',{timeout:5000})
     cy.get('[data-cy="app-auth-modal"]',{timeout:5000})
     cy.get('#email').should('be.visible').type(email);
     cy.get('#password').should('be.visible').type(password);
     cy.get('[data-cy="auth-btn"]').click();
+});
+
+Cypress.Commands.add('go_to_Eduction_button', () => {
+    cy.get('img.arrow-icon').first().should('be.visible').click();
+    cy.contains('span.link-text', 'Settings').should('be.visible').click();
+    cy.contains('button.tab-links', 'Education').click({ force: true });
 });

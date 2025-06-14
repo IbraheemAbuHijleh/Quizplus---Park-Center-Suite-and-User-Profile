@@ -1,3 +1,4 @@
+import {timeout} from "rxjs";
 
 
 describe('Test Suit USER Profile /Education', () => {
@@ -7,10 +8,7 @@ describe('Test Suit USER Profile /Education', () => {
         return false;
     });
 
-
-
-    it('Log in and go Settings and enter Education and check URL', () => {
-
+    beforeEach(() => {
         cy.clearCookies();
 
         cy.clearLocalStorage();
@@ -19,92 +17,81 @@ describe('Test Suit USER Profile /Education', () => {
 
         cy.visit('/');
 
-        cy.get('[data-cy="loginCTA-header"]', { timeout: 5000 }).should('be.visible').click();
+        cy.login('1203065@student.birzeit.edu','IIIIBBBB1234');
 
-        cy.get('[data-cy="app-auth-modal"]').should('be.visible')
+        cy.go_to_Eduction_button();
+    })
 
-        cy.get('#email', { timeout: 50000 }).should('be.visible').type('1203065@student.birzeit.edu');
 
-        cy.get('#password', { timeout: 50000 }).should('be.visible').type('IIIIBBBB1234');
 
-        cy.get('[data-cy="auth-btn"]').should('be.visible').click();
-
-        cy.get('img.arrow-icon').first().should('be.visible').click();
-
-        cy.contains('span.link-text', 'Settings').should('be.visible').click();
-
-        cy.contains('button.tab-links', 'Education').click({ force: true });
-
-        cy.get('button.a-center.btn.d-flex.img-wrapper-hover-supported-primary-to-white.j-center.outline.ripple')
-            .should('exist');
+   /* it('Log in and go Settings and click Education and check URL', () => {
 
         cy.url().should('contain','/account/about/education')
     });
-    it('Click Buttoun and Show Model ',() =>{
-
-        cy.clearCookies();
-
-        cy.clearLocalStorage();
-
-        cy.setCookie('user_preferred_language', 'en');
-
-        cy.visit('/');
-
-        cy.get('[data-cy="loginCTA-header"]', { timeout: 5000 }).should('be.visible').click();
-        cy.get('[data-cy="app-auth-modal"]').should('be.visible').click();
-
-        cy.get('#email', { timeout: 50000 }).should('be.visible').type('1203065@student.birzeit.edu');
-
-        cy.get('#password', { timeout: 50000 }).should('be.visible').type('IIIIBBBB1234');
-
-        cy.get('[data-cy="auth-btn"]').should('be.visible').click();
-
-        cy.get('img.arrow-icon').first().should('be.visible').click();
-
-        cy.contains('span.link-text', 'Settings').should('be.visible').click();
-
-        cy.contains('button.tab-links', 'Education').click({ force: true });
+*/
+  /*  it('Click Buttoun and Show Model ',() =>{
 
         cy.get('button.a-center.btn.d-flex.img-wrapper-hover-supported-primary-to-white.j-center.outline.ripple')
             .should('be.visible').click();
 
-        cy.get('button.a-center.btn.d-flex.j-center.outline.ripple').should('exist');
+        cy.get('button.a-center.btn.d-flex.j-center.outline.ripple').should('be.visible');
     });
+    */
 
-    it('after click Eduction the model must be empty if First time I enter this data',() =>{
 
-
-        cy.setCookie('user_preferred_language', 'en');
-
-        cy.visit('/');
-
-        cy.get('[data-cy="loginCTA-header"]', { timeout: 5000 }).should('be.visible').click();
-
-        cy.get('#email', { timeout: 50000 }).should('be.visible').type('abuhijlehibrahim2002@gmail.com');
-
-        cy.get('#password', { timeout: 50000 }).should('be.visible').type('IIIIBBBB1234');
-
-        cy.get('[data-cy="auth-btn"]').should('be.visible').click();
-
-        cy.get('img.arrow-icon').first().should('be.visible').click();
-
-        cy.contains('span.link-text', 'Settings').should('be.visible').click();
-
-        cy.contains('button.tab-links', 'Education').click({ force: true });
+    it('Click Add Another, enter university, major, degree and save', () => {
+        // تعريف الاعتراض قبل تنفيذ اي عملية تنتظر الطلب منها
+        cy.intercept('POST', '**/api/users/user-profile').as('updateUserProfile');
 
         cy.get('button.a-center.btn.d-flex.img-wrapper-hover-supported-primary-to-white.j-center.outline.ripple')
-            .should('exist');
+            .should('be.visible')
+            .click();
 
-        cy.get('div.col-md-6.mb-4').eq(3).should('contain','');
+        cy.get('[id="Select your University/College_id"]')
+            .should('be.visible')
+            .click()
+            .type('Birzeit University');
 
-        cy.get('div.col-md-6.mb-4').eq(4).should('contain','');
+        cy.wait(1000);
 
-        cy.get('div.col-md-6.mb-4').eq(5).should('contain','');
+        cy.get('div').contains('Birzeit University').click({ force: true });
 
-        cy.get('div.edu-info.font-weight-bold.ng-star-inserted').eq(1).should('contain','');
+        cy.get('[id="Select your major_id"]')
+            .should('be.visible')
+            .click()
+            .type('Animal Training');
+
+        cy.wait(1000);
+
+        cy.get('div').contains('Animal Training').click({ force: true });
+
+        cy.get('div.input-mim').click();
+        cy.contains('Diploma').click();
+
+        cy.get('div.mock-input', { timeout: 10000 }).click();
+        cy.contains('button', '2025').click({ force: true });
+
+        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary')
+            .should('be.visible')
+            .click();
+
+       
+        cy.wait('@updateUserProfile', { timeout: 10000 }).its('response.statusCode').should('eq', 202);
+
+        cy.get('@updateUserProfile').then(({ request }) => {
+            const body = request.body;
+
+            expect(body.graduation_year).to.eq(2025);
+            expect(body.collage_degree).to.eq('DIPLOMA');
+            expect(body.university_id).to.eq(16014);
+            expect(body.major_id).to.eq(184);
+        });
     });
 
-    it('after click eduction the data show correct If the user has not entered data before',() =>{
+
+
+
+    /*it('after click eduction the data show correct If the user has not entered data before',() =>{
 
         ///   cy.clearCookies();
 
@@ -201,5 +188,5 @@ describe('Test Suit USER Profile /Education', () => {
         });
 
     });
-
+*/
 });

@@ -8,5 +8,10 @@ declare namespace Cypress {
          * @param password User password
          */
         login(email: string, password: string): Chainable<void>;
+
+        /**
+         * Custom command to go to the Education button in Quizplus settings
+         */
+        go_to_Eduction_button(): Chainable<void>;
     }
 }
