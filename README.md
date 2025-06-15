@@ -45,3 +45,50 @@ All test cases passed successfully, confirming that:
 Conclusion
 All scenarios have been validated and passed successfully, thanks to thorough planning and execution under the guidance of Kholoud Salameh. 
 The system behaves as expected across all tested user flows 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                    Cypress Test Report
+Test Suite: USER Profile /Education 
+
+ beforeEach() Summary:
+ 
+1-Clears cookies and localStorage.
+
+2-Sets user language cookie to English.
+
+3-Visits homepage and logs in using credentials.
+
+4-Navigates to the Education tab via helper cy.go_to_Eduction_button().
+
+Test Cases Overview:
+
+1.  Log in and go Settings and click Education and check URL
+
+•	Goal: Verify successful navigation to the education settings page
+•	Check: URL contains /account/about/education.
+•	Result: Passed.
+
+2. Click Button and Show Model
+ • Goal: Ensure the modal opens correctly when the "Add Another" button is clicked.
+ •	Check: Modal submit button is visible.
+ •	Result: Passed.
+   
+3. Click Add Another, enter university, major, degree and save
+•	Goal: Simulate adding a new education entry.
+•	Steps:
+o	Fill in: university, major, degree, graduation year.
+o	Submit and intercept the POST /api/users/user-profile request.
+•	Assertions:
+o	Response status is 202.
+o	Request body includes correct: graduation_year, collage_degree, university_id, and major_id.
+•	Result:  Passed.
+
+
+
+
+afterEach() Cleanup:
+•	Logs out user only if logout icon is found.
+•	Ensures session cleanup between test cases.
+
