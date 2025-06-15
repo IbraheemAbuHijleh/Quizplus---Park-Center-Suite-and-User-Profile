@@ -1,6 +1,4 @@
 
-
-
 describe('Test Suit USER Profile /Education', () => {
 
     Cypress.on('uncaught:exception', (err, runnable) => {
@@ -37,7 +35,9 @@ describe('Test Suit USER Profile /Education', () => {
         cy.get('button.a-center.btn.d-flex.j-center.outline.ripple').should('be.visible');
     });
 
-  it('Click Add Another, enter university, major, degree and save', () => {
+
+
+ it('Click Add Another, enter university, major, degree and save', () => {
 
       cy.intercept('POST', '**/api/users/user-profile').as('updateUserProfile');
 
@@ -73,7 +73,7 @@ describe('Test Suit USER Profile /Education', () => {
             .should('exist')
             .click({ force: true });
 
-       
+
         cy.wait('@updateUserProfile', { timeout: 10000 }).its('response.statusCode').should('eq', 202);
 
            cy.get('@updateUserProfile').then(({ request }) => {
@@ -112,65 +112,46 @@ describe('Test Suit USER Profile /Education', () => {
             expect(stillExists).to.be.false;
         });
 
-       /* cy.wait('@deleteUserProfile', { timeout: 10000 }).then((interception) => {
-            console.log('RESPONSE BODY:', interception.response.body);
-            cy.log(JSON.stringify(interception.response.body));
-        });
-        */
-
-
     });
 
-  /*  it('after click eduction the data show correct If the user has not entered data before',() =>{
 
-        ///   cy.clearCookies();
+    it('update eduction',() => {
 
-        //   cy.clearLocalStorage();
+        cy.intercept('GET', '**/api/users/user-profile').as('updateUserProfile');
 
-        cy.setCookie('user_preferred_language', 'en');
-
-        cy.visit('/');
-
-        cy.get('[data-cy="loginCTA-header"]', { timeout: 5000 }).should('be.visible').click();
-
-        cy.get('#email', { timeout: 50000 }).should('be.visible').type('1203065@student.birzeit.edu');
-
-        cy.get('#password', { timeout: 50000 }).should('be.visible').type('IIIIBBBB1234');
-
-        cy.get('[data-cy="auth-btn"]').should('be.visible').click();
-
-        cy.get('img.arrow-icon').first().should('be.visible').click();
-
-        cy.contains('span.link-text', 'Settings').should('be.visible').click();
-
-        cy.contains('button.tab-links', 'Education').click({ force: true });
-
-        cy.get('button.a-center.btn.d-flex.img-wrapper-hover-supported-primary-to-white.j-center.outline.ripple')
-            .should('be.visible').click();
-
-        cy.get('div.col-md-6.mb-4').eq(3).click();
-
-        cy.contains('div',('Birzeit University')).click();
-
-        cy.get('div.col-md-6.mb-4').eq(4).click();
-
-        cy.contains('div',('Commonwealth Studies')).click();
+        cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
 
         cy.get('div.input-mim').click();
 
-        cy.contains('div', 'Diploma').click();
-
-        const currentYear = new Date().getFullYear();
-
-        cy.contains('span', 'Select your graduation year').click();
-
-        cy.wait(1000);
-
-        cy.get('*').contains(currentYear.toString()).click();
+        cy.contains('Diploma').click();
 
         cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
 
+
+        cy.wait('@updateUserProfile', {timeout: 10000}).then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
+
+            const responseBody = interception.response.body;
+
+
+            expect(responseBody).to.have.property('data');
+
+            expect(responseBody.data).to.be.an('array');
+
+            const collage_degree='DIPLOMA' ;
+
+            expect(collage_degree).to.eq('DIPLOMA');
+
+
+        });
+        cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
+        cy.get('div.input-mim').click();
+        cy.contains('Doctorate').click();
+        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
+
     });
+});
+
 
     afterEach(() => {
         cy.get('body').then(($body) => {
@@ -180,6 +161,5 @@ describe('Test Suit USER Profile /Education', () => {
             }
         });
 
-    });
-*/
+
 });

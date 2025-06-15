@@ -6,37 +6,54 @@ describe('Quizplus - Park Center Suite', () => {
         console.error('Uncaught exception:', err.message);
         return false;
     });
-    it('after click Eduction the model must be empty if First time I enter this data',() =>{
+    beforeEach(() => {
+        cy.clearCookies();
 
+        cy.clearLocalStorage();
 
         cy.setCookie('user_preferred_language', 'en');
 
         cy.visit('/');
 
-        cy.get('[data-cy="loginCTA-header"]', { timeout: 5000 }).should('be.visible').click();
+        cy.login('1203065@student.birzeit.edu','IIIIBBBB1234');
 
-        cy.get('#email', { timeout: 50000 }).should('be.visible').type('abuhijlehibrahim2002@gmail.com');
+        cy.go_to_Eduction_button();
+    })
 
-        cy.get('#password', { timeout: 50000 }).should('be.visible').type('IIIIBBBB1234');
+    it('update eduction',() => {
 
-        cy.get('[data-cy="auth-btn"]').should('be.visible').click();
+        cy.intercept('GET', '**/api/users/user-profile').as('updateUserProfile');
 
-        cy.get('img.arrow-icon').first().should('be.visible').click();
+        cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
 
-        cy.contains('span.link-text', 'Settings').should('be.visible').click();
+        cy.get('div.input-mim').click();
 
-        cy.contains('button.tab-links', 'Education').click({ force: true });
+        cy.contains('Diploma').click();
 
-        cy.get('button.a-center.btn.d-flex.img-wrapper-hover-supported-primary-to-white.j-center.outline.ripple')
-            .should('exist');
+        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
 
-        cy.get('div.col-md-6.mb-4').eq(3).should('not.contain.text');
 
-        cy.get('div.col-md-6.mb-4').eq(4).should('not.contain.text');
+        cy.wait('@updateUserProfile', {timeout: 10000}).then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
 
-        cy.get('span.ng-star-inserted').eq(15).should('not.contain.text');
+            const responseBody = interception.response.body;
 
-        cy.get('div.edu-info.font-weight-bold.ng-star-inserted').eq(1).should('not.contain.text');
+
+            expect(responseBody).to.have.property('data');
+
+            expect(responseBody.data).to.be.an('array');
+
+            const collage_degree='DIPLOMA' ;
+
+            expect(collage_degree).to.eq('DIPLOMA');
+
+
+        });
+        cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
+        cy.get('div.input-mim').click();
+        cy.contains('Doctorate').click();
+        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
+
     });
 });
 
