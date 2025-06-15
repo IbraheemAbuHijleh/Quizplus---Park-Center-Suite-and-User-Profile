@@ -20,9 +20,9 @@ describe('Quizplus - Park Center Suite', () => {
         cy.go_to_Eduction_button();
     })
 
-    it('update eduction',() => {
+    it('Discard in the update flow ',() =>{
 
-        cy.intercept('GET', '**/api/users/user-profile').as('updateUserProfile');
+        cy.intercept('POST', '**/api/users/user-profile').as('addUserProfile');
 
         cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
 
@@ -30,31 +30,14 @@ describe('Quizplus - Park Center Suite', () => {
 
         cy.contains('Diploma').click();
 
-        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
+        cy.contains('button', 'Discard').should('be.visible').click();
+
+        cy.wait(1000);
+
+        cy.get('@addUserProfile.all').should('have.length', 0);
 
 
-        cy.wait('@updateUserProfile', {timeout: 10000}).then((interception) => {
-            expect(interception.response.statusCode).to.eq(200);
-
-            const responseBody = interception.response.body;
-
-
-            expect(responseBody).to.have.property('data');
-
-            expect(responseBody.data).to.be.an('array');
-
-            const collage_degree='DIPLOMA' ;
-
-            expect(collage_degree).to.eq('DIPLOMA');
-
-
-        });
-        cy.get('img.w-16px.h-16px.ml-4').should('be.visible').click({force: true});
-        cy.get('div.input-mim').click();
-        cy.contains('Doctorate').click();
-        cy.get('button.a-center.btn.d-flex.edit-btn.j-center.primary.ripple').should('be.visible').click();
-
-    });
+    })
 });
 
 
