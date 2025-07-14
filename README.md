@@ -1,4 +1,5 @@
-                                                                             Test Summary Report for Quizplus - Perks Center Suite
+Test Summary Report for Quizplus - Perks Center Suite
+
 Supervisor:KholoudSalamh
 
 Tester: Ibrahim Abu Hijleh
